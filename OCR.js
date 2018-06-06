@@ -1,6 +1,6 @@
 'use strict';
-var X = 10;
-var Y = 10;
+var X = 20;
+var Y = 20;
 var barrier = new Array();
 var XI = new Array();
 var YI = new Array(); 
@@ -45,13 +45,11 @@ function Rectangle(x,y,w,h){
 }
 
 function initialBarrier(rect){
-
     var x=rect.x;
     var y=rect.y;
     var w=rect.w;
     var h=rect.h;
     
-
     for (var p = x; p < x+w; p++ ) {
         for (var q = y; q < y+h; q++) {
             barrier[p][q].value = 0;
@@ -66,7 +64,10 @@ function initialBarrier(rect){
     YI.push(y,y+h,y+h+h);
 }
 
-function insertsort(arr){
+function DuplicateAndSort(arr){
+    var set = new Set();
+    var dup = new Array();
+
     for(var i = 1; i < arr.length; i++){
         //升序
         if(arr[i] < arr[i-1]){
@@ -82,19 +83,30 @@ function insertsort(arr){
             }
             //插入
             arr[j+1] = guard;
+        }else if(arr[i] == arr[i-1]){
+            for(var j = i+1; j < arr.length; j++){
+                arr[j]
+            }
         }
     }
+
+    for(var i = 0,len = arr.length; i < len; i++){
+        set.add(arr[i]);
+    }
+    for( var s of set){
+        dup.push(s);
+    }
+    return dup;
 }
 
 function GenerateV(){
     var i,j,lenx,leny;
-    insertsort(XI);
-    insertsort(YI);
+    XI = DuplicateAndSort(XI);
+    YI = DuplicateAndSort(YI);
     for(i = 0, leny = XI.length; i < leny; i++){ 
          var m = XI[i];
         for( j = 0, lenx = YI.length; j < lenx; j++){
-            var n = YI[j];
-            //console.log("m= " + m+" n=" +n)
+            var n = YI[j];    
             if(barrier[m][n].value != 0){   
                 barrier[m][n].vx = i;
                 barrier[m][n].vy = j;       
@@ -104,22 +116,20 @@ function GenerateV(){
             }
         }
     }
-
 }
-
 
 function dirns(s,d){
     var sx = s.x,dx = d.x;
     var sy = s.y,dy = d.y;
-    var dirns = new Array();
+    var dirns = "";
     if(dy > sy)
-        dirns.push("N");
+        dirns += "N";
     if(dx > sx)
-        dirns.push("E");
+        dirns += "E";
     if(dy < sy)
-        dirns.push("S");
+        dirns += "S";
     if(dx < sx)
-        dirns.push("W");
+        dirns += "W";
 
     return dirns;
 }
@@ -127,71 +137,8 @@ function dirns(s,d){
 function Distance(s,d){
     return Math.abs(s.x - d.x) + Math.abs(d.y-s.y);
 }
-/*
-function neighbure(n,d){
-    console.log("n = " + n + " d = " + d);
-    switch(n){
-        case "l":
-            switch(d){
-                case "N":
-                    return "W";
-                    break;
-                case "E":
-                    return "N";
-                    break;
-                case "S":
-                    return "E";
-                    break;
-                case "W":
-                    return "S";
-                    break;
-                default:
-                    console.log("SwitchL error!");
-            }
-            break;
-        case "r":
-            switch(d){
-                case "N":
-                    return "E";
-                    break;
-                case "E":
-                    return "S";
-                    break;
-                case "S":
-                    return "W";
-                    break;
-                case "W":
-                    return "N";
-                    break;
-                default:
-                 console.log("SwitchR error!");	
-            }
-            break;
-        case "re":
-            switch(d){
-                case "N":
-                    return "S";
-                    break;
-                case "E":
-                    return "W";
-                    break;
-                case "S":
-                    return "N";
-                    break;
-                case "W":
-                    return "E";
-                    break;
-                default:
-                    console.log("SwitchRe error!");	
-            }
-            break;
-        default:
-            console.log("Switch error!");
-    }
-}*/
 
 function neighbure(n,d){
-    //console.log("n = " + n + " d = " + d);
     if(n == "l"){ 
         if(d == "N")
             return "W";
@@ -226,20 +173,17 @@ function neighbure(n,d){
 
 
 function GenerateE(s){ 
-    //console.log("GenerateE begin" );
-    //s = barrier[s.x][s.y];
+
     var D = s.d;
-    //console.log(s);
     var x = s.vx;
     var y = s.vy;
-    //console.log("D = "+ D);
     var dr = neighbure("r",D);
     var dl = neighbure("l",D);
-   
-
     var list = new Array();
+
     if(D == "N"){
         if((y < (Y-1)) && (VectorPoint[x][y+1] != null)){
+            var p = 
             list.push(VectorPoint[x][y+1]);
         }
     }
@@ -255,7 +199,8 @@ function GenerateE(s){
     }
     else if(D == "W"){
         if((x > 0) && VectorPoint[x-1][y] != null){
-            list.push(VectorPoint[x-1][y]);
+            var p = VectorPoint[x-1][y];
+            list.push(barrier[p.x][p.y]);
         }
     }
     /////////////////////////////////////////////////
@@ -302,17 +247,11 @@ function GenerateE(s){
     }
 
     barrier[s.x][s.y].plist = list;
-    //console.log(barrier[s.x][s.y]);
-    //console.log("GenerateE over!");
    
 }
 
 function Bends(s,d){
-    //var s = barrier[s1.x][s1.y];
-    //var d = barrier[d1.x][d1.y];
-    var Ds = dirns(s,d);
-    var ds = Ds[0] + Ds[1] +"";
-    //console.log(s.d);
+    var ds = dirns(s,d);
     if(s.d == d.d && ds == s.d )
         return 0;
     if((neighbure("l",d.d) == s.d || neighbure("r",d.d) == s.d) && (ds.indexOf(s.d) !=-1 ))
@@ -341,10 +280,8 @@ function Queue(){
     var items = new Array();
 
     function QueueElememt(elememt){
-        //console.log("(((("+elememt.cv);
         this.elememt = elememt;
         this.priority = elememt.cv;
-        //console.log(")))))"+this.priority);
     }
 
     this.enqueue = function(elememt){
@@ -354,7 +291,7 @@ function Queue(){
         }   else {
             var added = false;
             for(var i = 0, len = items.length; i < len; i++){
-                if(queueElememt.priority < items[i].priority){
+                if(queueElememt.priority < items[i].priority || queueElememt.priority == items[i].priority){
                     items.splice(i,0,queueElememt);
                     added = true;
                     break;
@@ -383,73 +320,62 @@ function Queue(){
 }
 
 function getPath(s,d){
-    //console.log(s);
     var dir = dirns(s,d);
-    var Ds = dir[0]; //s.d = Ds;
-    var Dd = dir[1]; //d.d = Dd;
-    barrier[s.x][s.y].d = Ds;
-    barrier[d.x][d.y].d = Dd;
-    var lv = Distance(s,d);
-    var bv = Bends(s,d);
-    var cv = lv + bv;
-   
-   // GenerateE(barrier[s.x][s.y]);
+    var Ds = dir.charAt(0); s.d = Ds;
+    var Dd = dir.charAt(1); d.d = Dd;
 
-    s = barrier[s.x][s.y];
-    //console.log(s);
+    var lv = Distance(s,s);
+    var bv = Bends(s,d);
+    var cv = Distance(s,d) + bv;
+
+    s.parent = null;
+    barrier[s.x][s.y] = s;
     var entrys = new Entry(s,Ds,lv,bv,cv);
     var queue = new Queue();
     queue.enqueue(entrys);
     
-    barrier[s.x][s.y].parent = null;
-
     var flag = false;
     while(!queue.isEmpty() && !flag){
         var entry = queue.dequeue().elememt;
         var s = entry.v, Ds = entry.D, ls = entry.lv, bs = entry.bv;
-        s = barrier[s.x][s.y];
+        //s = barrier[s.x][s.y];
         GenerateE(s);
+        //d.d = dirns(s,d);
         for(var i = 0, len = s.plist.length; i < len; i++){
             var v = s.plist.shift();
-           
-           
-            var Dv = dirns(s,v); barrier[v.x][v.y].d = Dv; v = barrier[v.x][v.y];
-            var lv = ls + Distance(s,v) + Distance(v,d);
+            var Dv = dirns(s,v);
+            v.d = Dv;
+            var lv = ls + Distance(s,v);
             var bv;
             if(Dv == Ds)
                 bv = bs;
             else
                 bv = bs + 1 + Bends(v,d); 
-            barrier[v.x][v.y].parent = barrier[s.x][s.y]; //new point(s.x,s.y); 
-            console.log("&&&&&&&&&&&&&");
-            console.log(s); 
-            console.log("&&&&&&&&&&&&&");
-            console.log(v);
-            //break;
+            v.parent = barrier[s.x][s.y];
+            barrier[v.x][v.y] = v;
             if( v.x == d.x && v.y == d.y){
-              
                 flag = true;
                 break;
             }
             else{
-                var entryv = new Entry(v,Dv,lv,bv,lv+bv); //Entry(v: any, D: any, lv: any, bv: any,cv: any):
-                //console.log("+++++++++");
-                //console.log(v);
-                //GenerateE(barrier[v.x][v.y]); 
-                //console.log(entryv);
+                var entryv = new Entry(v,Dv,lv,bv,lv+bv+ Distance(v,d)); //Entry(v: any, D: any, lv: any, bv: any,cv: any):
                 queue.enqueue(entryv);
-                //console.log("*********************");
             }
         }
     }
 
     var p = d;
     while(p.parent != null){
-        barrier[p.x][p.y].value = 3;
+        barrier[p.x][p.y].value = '*';
         p = p.parent;
     }
-    barrier[p.x][p.y].value = 3;
+    barrier[p.x][p.y].value = '*';
 
+    
+}
+
+function display(){
+    console.log("\n\n");
     var string = "";
     for(var i = 0; i < X;i ++){
         for(var j = 0; j < Y; j++){
@@ -462,30 +388,30 @@ function getPath(s,d){
 
 function init(){
     var rect1 = new Rectangle(4,2,3,3);
-    var rect2 = new Rectangle(0,7,3,3);
-    //var rect3 = new Rectangle(1,16,6,3);
-    //var rect4 = new Rectangle(9,1,7,4);
+    var rect2 = new Rectangle(1,6,3,3);
+    var rect3 = new Rectangle(1,16,6,3);
+    var rect4 = new Rectangle(9,1,7,5);
+    var rect5 = new Rectangle(12,11,4,3);
 
     initialBarrier(rect1);
     initialBarrier(rect2);
-    //initialBarrier(rect3);
-    //initialBarrier(rect4);
+    initialBarrier(rect3);
+    initialBarrier(rect4);
+    initialBarrier(rect5);
 
-    var string = "";
-    for(var i = 0; i < X; i++){
-        for(var j = 0; j < Y; j++){
-            string += barrier[i][j].value + " " ;
-        }
-        console.log(string); 
-        string = "";
-    }
-    console.log();
-    console.log();
-
+    display();
 }
 
 init();
 GenerateV();
-var s = barrier[5][1];
-var d = barrier[5][5];
+var s; 
+var d;
+s = barrier[5][5];
+d = barrier[12][6];
+//getPath(s,d);
+d = barrier[4][7];
+//getPath(s,d);
+s = barrier[12][6];
+d = barrier[4][15];
 getPath(s,d);
+display();
