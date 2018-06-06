@@ -1,6 +1,6 @@
 'use strict';
 var X = 10;
-var Y = 10; 
+var Y = 10;
 var barrier = new Array();
 var XI = new Array();
 var YI = new Array(); 
@@ -10,10 +10,13 @@ function point(x,y){
     var object = new Object();
     object.value = -1;
     object.x=x;
+    object.vx=-1;
     object.y=y;
+    object.vy=-1;
     object.d=null;
     object.parent = null;
     object.plist = new Array();
+
     return object;
 }
 
@@ -22,9 +25,7 @@ for(var i=0 ; i < Y; i++){
     for(var j=0 ; j < X; j++){ 
         var p = new point(i,j);
         p.value = 1;
-        //console.log(p.value+"&&&");
         barrier[i][j]= p;
-        //console.log(barrier[i][j].value+"%%%"); 
     } 
 } 
 
@@ -61,7 +62,6 @@ function initialBarrier(rect){
     h = Math.floor((h+2)/2);
     x = x-1;
     y = y-1;
-    //console.log(w+"$$" +h);
     XI.push(x,x+w,x+w+w);
     YI.push(y,y+h,y+h+h);
 }
@@ -92,80 +92,21 @@ function GenerateV(){
     insertsort(YI);
     for(i = 0, leny = XI.length; i < leny; i++){ 
          var m = XI[i];
-        // console.log("m=" + m);
         for( j = 0, lenx = YI.length; j < lenx; j++){
             var n = YI[j];
-           // console.log("n=" + n);
-           // console.log("bmnv=" + barrier[m][n].value);
-            if(barrier[m][n].value != 0){
-                //var p = point(i,j);
-                var p = barrier[m][n];
-                VectorPoint[i].push(p);
+            //console.log("m= " + m+" n=" +n)
+            if(barrier[m][n].value != 0){   
+                barrier[m][n].vx = i;
+                barrier[m][n].vy = j;       
+                VectorPoint[i][j] = barrier[m][n];
+            }else {
+                VectorPoint[i][j] = null;
             }
         }
     }
-    
-   /* var s ="" ;
-    for(i = 0, leny = VectorPoint.length; i < leny; i++){
-        for(j = 0, lenx = VectorPoint[i].length; j < lenx; j++){
-            s += ("("+VectorPoint[i][j].x + "," + VectorPoint[i][j].y +")  ");
-        }
-        console.log(s);
-        s = "";
-    }*/
+
 }
 
-function GenerateE(){
-    var i,j,lenx,leny;
-    for(i = 0, leny = VectorPoint.length; i < leny; i++){
-        for(j = 0, lenx = VectorPoint[i].length; j < lenx; j++){
-            //console.log("lenx = " + lenx +" leny=" + leny);
-           // console.log(" VP = " + VectorPoint[i][j].x);
-            //console.log(p.x+"%%%");
-            var p = VectorPoint[i][j]; 
-            var list = new Array();
-            var ii = p.x, jj = p.y;
-            if(ii == 0){ //first raw
-                if(jj == 0){ // first col
-                    //barrier[p.x][p.y].plist.push(VectorPoint[i][j+1],VectorPoint[i+1][j]); 
-                    //
-                    //var p1 = VectorPoint[i][j+1];
-                    //var p2 = VectorPoint[i+1][j];
-                   // p1 = barrier[p1.x][p1.y];
-                   // console.log(p1.x+"%%%");
-                    //p2 = barrier[p2.x][p2.y];i
-                    //list.push(p1,p2);
-                    list.push(barrier[ii][jj+1],barrier[ii+1][jj]);
-                    barrier[ii][jj].plist = list;
-                }else if(jj == lenx -1){ //last col
-                   // console.log(VectorPoint[i+1][j].x+"%%%");
-                    list.push(barrier[ii][jj-1],barrier[ii+1][jj]);
-                    barrier[jj][jj].plist = list;
-                }else{
-                    list.push(barrier[ii][jj-1],barrier[ii][jj+1],barrier[ii+1][jj]);
-                    barrier[ii][jj].plist = list;
-                }
-            }else if(ii == (leny -1)){ // last raw
-                if(jj == 0){ // first col
-                    list.push(barrier[ii][jj+1],barrier[ii-1][jj]);
-                    barrier[ii][jj].plist = list;
-                }else if(jj == lenx -1){ // last col
-                    list.push(barrier[ii][jj-1],barrier[ii-1][jj]);
-                    barrier[ii][jj].plist = list;j
-                }else {
-                    plist.push(barrier[ii][jj-1],barrier[ii][jj+1],barrier[ii-1][jj]);
-                    barrier[ii][jj].plist = list;
-                }
-            }
-            else{ //middle
-                //console.log(p.x+"%%%" + p.y);
-                //console.log(barrier[ii][jj-1].y+"  "+barrier[ii][jj+1].y+"  "+barrier[ii-1][jj].x+"  "+barrier[ii+1][jj].x);
-                list.push(barrier[ii][jj-1],barrier[ii][jj+1],barrier[ii-1][jj],barrier[ii+1][jj]);
-                barrier[ii][jj].plist = list;
-            }
-        }
-    }
-}
 
 function dirns(s,d){
     var sx = s.x,dx = d.x;
@@ -183,77 +124,195 @@ function dirns(s,d){
     return dirns;
 }
 
-
-
 function Distance(s,d){
     return Math.abs(s.x - d.x) + Math.abs(d.y-s.y);
 }
-
+/*
 function neighbure(n,d){
+    console.log("n = " + n + " d = " + d);
     switch(n){
         case "l":
             switch(d){
                 case "N":
-                return "W";
-                break;
+                    return "W";
+                    break;
                 case "E":
-                return "N";
-                break;
+                    return "N";
+                    break;
                 case "S":
-                return "E";
-                break;
+                    return "E";
+                    break;
                 case "W":
-                return "S";
-                break;
+                    return "S";
+                    break;
                 default:
-                console.log("SwitchL error!");
+                    console.log("SwitchL error!");
             }
-        break;
+            break;
         case "r":
             switch(d){
                 case "N":
-                return "E";
-                break;
+                    return "E";
+                    break;
                 case "E":
-                return "S";
-                break;
+                    return "S";
+                    break;
                 case "S":
-                return "W";
-                break;
+                    return "W";
+                    break;
                 case "W":
-                return "N";
-                break;
+                    return "N";
+                    break;
                 default:
-                console.log("SwitchR error!");					
+                 console.log("SwitchR error!");	
             }
-        break;
+            break;
         case "re":
             switch(d){
                 case "N":
-                return "S";
-                break;
+                    return "S";
+                    break;
                 case "E":
-                return "W";
-                break;
+                    return "W";
+                    break;
                 case "S":
-                return "N";
-                break;
+                    return "N";
+                    break;
                 case "W":
-                return "E";
-                break;
+                    return "E";
+                    break;
                 default:
-                console.log("SwitchRe error!");					
+                    console.log("SwitchRe error!");	
             }
-        break;
+            break;
         default:
-        console.log("Switch error!");
+            console.log("Switch error!");
+    }
+}*/
+
+function neighbure(n,d){
+    //console.log("n = " + n + " d = " + d);
+    if(n == "l"){ 
+        if(d == "N")
+            return "W";
+        else if(d == "E")
+            return "N";
+        else if(d == "S")
+            return "E";
+        else if(d == "W")
+            return "S";
+        
+    }else if(n == "r"){
+        if(d == "N")
+            return "E";
+        else if(d == "E")
+            return "S";
+        else if(d == "S")
+            return "W";
+        else if(d == "W")
+            return "N";
+
+    }else if(n == "re"){
+        if(d == "N")
+            return "S";
+        else if(d == "E")
+            return "W";
+        else if(d == "S")
+            return "N";
+        else if(d == "W")
+            return "E";
     }
 }
-function Bends(s1,d1){
-    var s = barrier[s1.x][s1.y];
-    var d = barrier[d1.x][d1.y];
+
+
+function GenerateE(s){ 
+    //console.log("GenerateE begin" );
+    //s = barrier[s.x][s.y];
+    var D = s.d;
+    //console.log(s);
+    var x = s.vx;
+    var y = s.vy;
+    //console.log("D = "+ D);
+    var dr = neighbure("r",D);
+    var dl = neighbure("l",D);
+   
+
+    var list = new Array();
+    if(D == "N"){
+        if((y < (Y-1)) && (VectorPoint[x][y+1] != null)){
+            list.push(VectorPoint[x][y+1]);
+        }
+    }
+    else if(D == "S"){
+        if((y > 0) && (VectorPoint[x][y-1] != null)){
+            list.push(VectorPoint[x][y-1]);
+        }
+    }
+    else if(D == "E"){
+        if((x < (X -1)) && VectorPoint[x+1][y] != null){
+            list.push(VectorPoint[x+1][y]);
+        }
+    }
+    else if(D == "W"){
+        if((x > 0) && VectorPoint[x-1][y] != null){
+            list.push(VectorPoint[x-1][y]);
+        }
+    }
+    /////////////////////////////////////////////////
+    if(dr == "N"){
+        if((y < (Y-1)) && (VectorPoint[x][y+1] != null)){
+            list.push(VectorPoint[x][y+1]);
+        }
+    }
+    else if(dr == "S"){
+        if((y > 0) && (VectorPoint[x][y-1] != null)){
+            list.push(VectorPoint[x][y-1]);
+        }
+    }
+    else if(dr == "E"){
+        if((x < (X -1)) && VectorPoint[x+1][y] != null){
+            list.push(VectorPoint[x+1][y]);
+        }
+    }
+    else if(dr == "W"){
+        if((x > 0) && VectorPoint[x-1][y] != null){
+            list.push(VectorPoint[x-1][y]);
+        }
+    }
+   //////////////////////////////////////////////////////
+    if(dl == "N"){
+        if((y < (Y-1)) && (VectorPoint[x][y+1] != null)){
+            list.push(VectorPoint[x][y+1]);
+        }
+    }
+    else if(dl == "S"){
+        if((y > 0) && (VectorPoint[x][y-1] != null)){
+            list.push(VectorPoint[x][y-1]);
+        }
+    }
+    else if(dl == "E"){
+        if((x < (X -1)) && VectorPoint[x+1][y] != null){
+            list.push(VectorPoint[x+1][y]);
+        }
+    }
+    else if(dl == "W"){
+        if((x > 0) && VectorPoint[x-1][y] != null){
+            list.push(VectorPoint[x-1][y]);
+        }
+    }
+
+    barrier[s.x][s.y].plist = list;
+    //console.log(barrier[s.x][s.y]);
+    //console.log("GenerateE over!");
+   
+}
+
+function Bends(s,d){
+    //var s = barrier[s1.x][s1.y];
+    //var d = barrier[d1.x][d1.y];
     var Ds = dirns(s,d);
     var ds = Ds[0] + Ds[1] +"";
+    //console.log(s.d);
     if(s.d == d.d && ds == s.d )
         return 0;
     if((neighbure("l",d.d) == s.d || neighbure("r",d.d) == s.d) && (ds.indexOf(s.d) !=-1 ))
@@ -273,7 +332,6 @@ function Entry(v,D,lv,bv,cv){
     object.D=D;
     object.lv=lv;
     object.bv=bv;
-    //object.p=p;
     object.cv=cv;
 
     return object;		
@@ -324,65 +382,73 @@ function Queue(){
     }
 }
 
-
-
 function getPath(s,d){
-    //console.log(s1);
-    //var s = barrier[s1.x][s1.y];
-    //var d = barrier[d1.x][d1.y];
+    //console.log(s);
     var dir = dirns(s,d);
-    var Ds = dir[0]; s.d = Ds;
-    var Dd = dir[1]; d.d = Ds;
+    var Ds = dir[0]; //s.d = Ds;
+    var Dd = dir[1]; //d.d = Dd;
+    barrier[s.x][s.y].d = Ds;
+    barrier[d.x][d.y].d = Dd;
     var lv = Distance(s,d);
     var bv = Bends(s,d);
-    //var p = null;
     var cv = lv + bv;
+   
+   // GenerateE(barrier[s.x][s.y]);
+
+    s = barrier[s.x][s.y];
+    //console.log(s);
     var entrys = new Entry(s,Ds,lv,bv,cv);
     var queue = new Queue();
     queue.enqueue(entrys);
     
-    //console.log(entrys.D+"*****");
     barrier[s.x][s.y].parent = null;
 
     var flag = false;
-   // console.log(queue.front());
     while(!queue.isEmpty() && !flag){
-       // console.log(queue.front());
-        //var entry = new Entry();
         var entry = queue.dequeue().elememt;
         var s = entry.v, Ds = entry.D, ls = entry.lv, bs = entry.bv;
         s = barrier[s.x][s.y];
-        //console.log(s);
+        GenerateE(s);
         for(var i = 0, len = s.plist.length; i < len; i++){
             var v = s.plist.shift();
-            v = barrier[v.x][v.y];
-            //console.log(v);
-            var Dv = dirns(s,v); v.d = Dv;
+           
+           
+            var Dv = dirns(s,v); barrier[v.x][v.y].d = Dv; v = barrier[v.x][v.y];
             var lv = ls + Distance(s,v) + Distance(v,d);
             var bv;
             if(Dv == Ds)
                 bv = bs;
             else
                 bv = bs + 1 + Bends(v,d); 
-            barrier[v.x][v.y].parent = new point(s.x,s.y); 
+            barrier[v.x][v.y].parent = barrier[s.x][s.y]; //new point(s.x,s.y); 
+            console.log("&&&&&&&&&&&&&");
+            console.log(s); 
+            console.log("&&&&&&&&&&&&&");
+            console.log(v);
+            //break;
             if( v.x == d.x && v.y == d.y){
+              
                 flag = true;
                 break;
             }
             else{
-                var entryv = new Entry(v,Dv,lv,bv,lv+bv); //Entry(v: any, D: any, lv: any, bv: any,cv: any): 
+                var entryv = new Entry(v,Dv,lv,bv,lv+bv); //Entry(v: any, D: any, lv: any, bv: any,cv: any):
+                //console.log("+++++++++");
+                //console.log(v);
+                //GenerateE(barrier[v.x][v.y]); 
+                //console.log(entryv);
                 queue.enqueue(entryv);
-                console.log("*********************");
+                //console.log("*********************");
             }
         }
-        console.log(queue.isEmpty());
     }
 
     var p = d;
     while(p.parent != null){
-        barrier[p.x][p.y].value= 3;
+        barrier[p.x][p.y].value = 3;
         p = p.parent;
     }
+    barrier[p.x][p.y].value = 3;
 
     var string = "";
     for(var i = 0; i < X;i ++){
@@ -391,34 +457,35 @@ function getPath(s,d){
         }
         console.log(string); 
         string = "";
-    }     
+    }
 }
 
 function init(){
     var rect1 = new Rectangle(4,2,3,3);
-    //rect2 = new Rectangle(6,10,8,5);
-    //rect3 = new Rectangle(1,16,6,3);
-    //rect4 = new Rectangle(9,1,7,4);
+    var rect2 = new Rectangle(0,7,3,3);
+    //var rect3 = new Rectangle(1,16,6,3);
+    //var rect4 = new Rectangle(9,1,7,4);
 
     initialBarrier(rect1);
-    //initialBarrier(rect2);
+    initialBarrier(rect2);
     //initialBarrier(rect3);
     //initialBarrier(rect4);
 
-    /*var string = "";
+    var string = "";
     for(var i = 0; i < X; i++){
         for(var j = 0; j < Y; j++){
             string += barrier[i][j].value + " " ;
         }
         console.log(string); 
         string = "";
-    }*/
+    }
+    console.log();
+    console.log();
 
 }
 
 init();
 GenerateV();
-GenerateE();
-var s = barrier[3][1];
-var d = barrier[7][3];
+var s = barrier[5][1];
+var d = barrier[5][5];
 getPath(s,d);
