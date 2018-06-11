@@ -262,19 +262,21 @@ function Draw() {
   };
   //画线
 
-  this.drawPath = path => {
+  this.drawPath =(path,x1,y1,x2,y2) => {
     let pathStr = "";
+    pathStr += "M" + y1 +" " + x1;
     for (let i = 0; i < path.length; i++) {
-      if (i == 0) {
-        pathStr += "M" + path[i].y + " " + path[i].x;
-      } else {
+     // if (i == 0) {
+        //pathStr += "M" + path[i].y + " " + path[i].x;
+      //} else {
         pathStr += "L" + path[i].y + " " + path[i].x;
-      }
+     // }
     }
+    pathStr += "L" + y2 +" " + x2;
     console.log(pathStr);
     var p = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    p.setAttribute("d", pathStr);
 
+    p.setAttribute("d", pathStr);
     p.setAttribute("fill", "none");
     p.setAttribute("stroke", "#00a3ef");
     this.el.appendChild(p);

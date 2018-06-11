@@ -78,8 +78,9 @@
                     }
 
                     //算连接点的位置
-                    startPt = getStartLinkPoint(this.startY, this.startX, this.startDir);
-                    endPt = getEndLinkPoint(this.endY, this.endX, this.endDir);
+                    GenerateV();
+                    startPt = getLinkPoint(this.startY, this.startX, this.startDir);
+                    endPt = getLinkPoint(this.endY, this.endX, this.endDir);
 
 
                     for (let i = 0; i < barrier.length; i++) {
@@ -102,7 +103,8 @@
                     console.log(draw.rectDatas);
                     path = getPath(start, end, this.startDir, this.endDir);
                     console.log(path);
-                    draw.drawPath(path);
+                    if( path.length > 0)
+                        draw.drawPath(path,this.startY,this.startX,this.endY,this.endX);
                 }
             }
         })

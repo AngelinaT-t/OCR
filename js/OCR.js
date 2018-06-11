@@ -58,8 +58,8 @@ function initialBarrier(rect) {
     }
   }
 
-  XI.push(x - 1, x + Math.floor(w / 2), x + w + 1);
-  YI.push(y - 1, y + Math.floor(h / 2), y + h + 1);
+  XI.push(x - 10, x + Math.floor(w / 2), x + w + 10);
+  YI.push(y - 10, y + Math.floor(h / 2), y + h + 10);
 }
 
 function DuplicateAndSort(arr) {
@@ -167,7 +167,7 @@ function GenerateE(s) {
   var D = s.d;
   var x = barrier[s.x][s.y].vx;
   var y = barrier[s.x][s.y].vy;
-  var dr = neighbure("r", D);
+  var dr = neighbure("r", D );
   var dl = neighbure("l", D);
   var list = new Array();
 
@@ -319,90 +319,105 @@ function Pathpoint(x, y) {
 }
 
 function getPath(s, d, sd, dd) {
-  GenerateV();
+  
+  //GenerateV();
+    if(s.vx != -1 && d.vx != -1){
+      s = VectorPoint[s.vx][s.vy];
+      d = VectorPoint[d.vx][d.vy];
+      s.d = sd;
+      d.d = dd;
 
-  s = VectorPoint[s.vx][s.vy];
-  d = VectorPoint[d.vx][d.vy];
-  s.d = sd;
-  d.d = dd;
+      var lbsv = 0;
+      var lbvd = Distance(s, d) + Bends(s, d);
+      var bv = 0;
 
-  var lbsv = 0;
-  var lbvd = Distance(s, d) + Bends(s, d);
-  var bv = 0;
+      s.lbsv = lbsv;
+      s.lbvd = lbvd;
+      s.bv = bv;
+      s.cv = lbsv + lbvd;
 
-  s.lbsv = lbsv;
-  s.lbvd = lbvd;
-  s.bv = bv;
-  s.cv = lbsv + lbvd;
+      var openlist = new openQueue();
+      var closelist = new Array();
+      openlist.enqueue(s);
 
-  var openlist = new openQueue();
-  var closelist = new Array();
-  openlist.enqueue(s);
-
-  var flag = false;
-  while (!openlist.isEmpty() && !flag) {
-    var ss = openlist.dequeue();
-    var Ds = ss.d,
-      lbsv = ss.lbsv,
-      bs = ss.bv;
-    var plist = GenerateE(ss);
-    for (var i = 0, len = plist.length; i < len; i++) {
-      var v = plist.shift();
-      if (v.x == d.x && v.y == d.y) {
-        v.parent = ss;
-        flag = true;
-        break;
-      }
-      if (!isIncloselist(closelist, v)) {
-        var Dv = dirns(ss, v);
-        Dv = Dv.length == 1 ? Dv.charAt(0) : Dv.charAt(1);
-        var bv, lbv;
-        if (Dv == Ds) bv = bs;
-        else bv = bs + 1;
-
-        var index = openlist.iscontain(v);
-        if (index != -1) {
-          var svcv = openlist.get(index).lbsv;
-          var vdir = v.d;
-          v.d = null;
-          lbv = lbsv + Distance(ss, v) + Bends(ss, v);
-          if (lbv < svcv) {
-            var updatev = new Pathpoint(v.x, v.y);
-            updatev.d = Dv;
-            updatev.parent = ss;
-            updatev.lbsv = lbv;
-            updatev.lbvd = Distance(v, d) + Bends(v, d);
-            updatev.bv = bv;
-            updatev.cv = lbsv + lbvd;
-            openlist[index] = updatev;
-          } else {
-            v.d = vdir;
+      var flag = false;
+      while (!openlist.isEmpty() && !flag) {
+        var ss = openlist.dequeue();
+        
+        console.log("#$#$#$-->");
+        console.log(ss);
+          console.log("<--#$#$#$");
+        var Ds = ss.d,
+          lbsv = ss.lbsv,
+          bs = ss.bv;
+        var plist = GenerateE(ss);
+        for (var i = 0, len = plist.length; i < len; i++) {
+          var v = plist.shift();
+          if (v.x == d.x && v.y == d.y) {
+            v.parent = ss;
+            flag = true;
+            break;
           }
-        } else {
-          lbv = lbsv + Distance(ss, v) + bv;
-          v.d = Dv;
-          v.parent = ss;
-          v.lbsv = lbv;
-          v.lbvd = Distance(v, d) + Bends(v, d);
-          v.bv = bv;
-          v.cv = lbv + Distance(v, d) + Bends(v, d);
-          openlist.enqueue(v);
+          if (!isIncloselist(closelist, v)) {
+          console.log(v);
+            var Dv = dirns(ss, v);
+            Dv = Dv.length == 1 ? Dv.charAt(0) : Dv.charAt(1);
+            var bv, lbv;
+            if (Dv == Ds) bv = bs;
+            else bv = bs + 1;
+
+            var index = openlist.iscontain(v);
+            if (index != -1) {
+              var svcv = openlist.get(index).lbsv;
+              var vdir = v.d;
+              v.d = null;
+              lbv = lbsv + Distance(ss, v) + Bends(ss, v);
+              if (lbv < svcv) {
+                var updatev = new Pathpoint(v.x, v.y);
+                updatev.d = Dv;
+                updatev.parent = ss;
+                updatev.lbsv = lbv;
+                updatev.lbvd = Distance(v, d) + Bends(v, d);
+                updatev.bv = bv;
+                updatev.cv = lbsv + lbvd;
+                openlist[index] = updatev;
+              } else {
+                v.d = vdir;
+              }
+            } else {
+              lbv = lbsv + Distance(ss, v) + bv;
+              v.d = Dv;
+              v.parent = ss;
+              v.lbsv = lbv;
+              v.lbvd = Distance(v, d) + Bends(v, d);
+              v.bv = bv;
+              v.cv = lbv + Distance(v, d) + Bends(v, d);
+              openlist.enqueue(v);
+            }
+          }
         }
+        closelist.push(ss);
       }
+
+      console.log("flag = " +flag);
+
+      Path = [];
+      var p = d;
+      while (p.parent != null) {
+        Path.unshift(barrier[p.x][p.y]);
+        p = p.parent;
+      }
+      if(p.x == s.x && p.y == s.y)
+        Path.unshift(barrier[p.x][p.y]);
+
+      GenerateV();
+      return Path;
     }
-    closelist.push(ss);
-  }
-
-  Path = [];
-  var p = d;
-  while (p.parent != null) {
-    Path.unshift(barrier[p.x][p.y]);
-    p = p.parent;
-  }
-  Path.unshift(barrier[p.x][p.y]);
-
-  GenerateV();
-  return Path;
+    else{
+      console.log("there is no path!")
+      Path = [];
+      return Path;
+    }
 }
 
 function init(x, y, w, h) {
@@ -410,20 +425,55 @@ function init(x, y, w, h) {
   initialBarrier(rect);
 }
 
+function getLinkPoint(x,y,d){
+  var xy = new Array();
+    if(d == "N" || d == "S"){
+      for(var i = 0,lenx = XI.length; i <lenx; i++){
+        if(XI[i] == x){
+          var indexX = i, indexY = 0;
+          var l = Math.abs(y-YI[0]);
+          for(var j = 1, leny = YI.length; j < leny; j++){
+              if((Math.abs(y-YI[j])< l) && (barrier[x][YI[j]].value !=0)){
+                l = Math.abs(y-YI[j]);
+                indexY = j;
+              }
+          }
+          break;
+        }
+      }
+      xy.push(XI[indexX],YI[indexY]);
+    }else {
+      for(var i = 0,lenx = YI.length; i <lenx; i++){
+        if(YI[i] == y){
+          var indexY = i, indexX = 0;
+          var l = Math.abs(x-XI[0]);
+          for(var j = 1, leny = XI.length; j < leny; j++){
+              if(Math.abs(x-XI[j]) < l && barrier[XI[j]][y].value !=0 ){
+                l = Math.abs(x-XI[j]);
+                indexX = j;
+              }
+          }
+          break;
+        }
+      }
+      xy.push(XI[indexX],YI[indexY]);
+    }
+    return xy;
+}
 function getStartLinkPoint(x, y, d) {
   var xy = new Array();
   switch (d) {
     case "W":
-      x -= 1;
+      x -= 10;
       break;
     case "E":
-      x += 1;
+      x += 10;
       break;
     case "S":
-      y -= 1;
+      y -= 10;
       break;
     case "N":
-      y += 1;
+      y += 10;
       break;
   }
   xy.push(x, y);
@@ -434,16 +484,16 @@ function getEndLinkPoint(x, y, d) {
   var xy = new Array();
   switch (d) {
     case "E":
-      x -= 1;
+      x -= 10;
       break;
     case "W":
-      x += 1;
+      x += 10;
       break;
     case "N":
-      y -= 1;
+      y -= 10;
       break;
     case "S":
-      y += 1;
+      y += 10;
       break;
   }
   xy.push(x, y);
