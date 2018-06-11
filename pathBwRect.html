@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link href='css/index.css' rel='stylesheet' type="text/css">
+    <script src='js/OCR20186701.js'></script>
+    <script src='js/draw.js'></script>
+    <script src='js/vue.js'></script>
+</head>
+
+<body>
+    <div class="ipt-area" id='app'>
+        <div>
+            <button @click='pickStart' :class='{hover:isPickStart}'>Pick Start</button>
+            <span>({{startX+','+startY}})</span>
+        </div>
+        <div>
+            <input type="text" placeholder="Start Direction" v-model='startDir'>
+        </div>
+        <div>
+            <button @click='pickEnd' :class='{hover:isPickEnd}'>Pick End</button>
+            ({{endX+','+endY}})
+        </div>
+        <div>
+            <input type="text" placeholder="End Direction" v-model='endDir'>
+        </div>
+        <div>
+            <button @click='lineUp'>Line Up</button>
+        </div>
+    </div>
+    <svg id='root' xmlns="http://www.w3.org/2000/svg"></svg>
+
+    <script>
+        var draw = new Draw(),
+            options = { width: 500, height: 500, elementID: 'root' };
+        draw.init(options);
+
+        var app = new Vue({
+            el: '#app',
+            data: {
+                startDir: '',
+                endDir: '',
+                isPickStart: false,
+                isPickEnd: false,
+                startX: 0,
+                startY: 0,
+                endX: 0,
+                endY: 0
+            },
+            methods: {
+                pickStart() {
+                    this.isPickEnd = false;
+                    this.isPickStart = !this.isPickStart;
+                    if (this.isPickStart) {
+                        draw.setPick('start');
+                    } else {
+                        draw.setPick();
+                    }
+
+                },
+                pickEnd() {
+                    this.isPickStart = false;
+                    this.isPickEnd = !this.isPickEnd;
+                    if (this.isPickEnd) {
+                        draw.setPick('end');
+                    } else {
+                        draw.setPick();
+                    }
+                },
+                lineUp() {
+                    let rects = draw.getRects(), path, startPt, endPt, start, end;
+                    for (let i = 0; i < rects.length; i++) {
+                        init(...rects[i]);
+                    }
+
+                    //算连接点的位置
+                    startPt = getStartLinkPoint(this.startY, this.startX, this.startDir);
+                    endPt = getEndLinkPoint(this.endY, this.endX, this.endDir);
+
+
+                    for (let i = 0; i < barrier.length; i++) {
+                        for (let j = 0; j < barrier[i].length; j++) {
+                            if (barrier[i][j].x === startPt[0] && barrier[i][j].y === startPt[1]) {
+                                start = barrier[i][j];
+
+                            }
+                            if (barrier[i][j].x === endPt[0] && barrier[i][j].y === endPt[1]) {
+                                end = barrier[i][j];
+                            }
+                            if (start && end) break;
+                        }
+                    }
+                    console.log('StartPoint:');
+                    console.log(start);
+                    console.log('EndPoint:');
+                    console.log(end);
+                    console.log('rects');
+                    console.log(draw.rectDatas);
+                    path = getPath(start, end, this.startDir, this.endDir);
+                    console.log(path);
+                    draw.drawPath(path);
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>
