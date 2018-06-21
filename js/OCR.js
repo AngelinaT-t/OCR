@@ -1,4 +1,5 @@
 "use strict";
+
 var X = 500;
 var Y = 500;
 var barrier = new Array();
