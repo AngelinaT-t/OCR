@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     <link href='css/index.css' rel='stylesheet' type="text/css">
-    <script src='js/OCR20186701.js'></script>
+    <script src='js/OCR.js'></script>
     <script src='js/draw.js'></script>
     <script src='js/vue.js'></script>
 </head>
@@ -73,38 +73,56 @@
                 },
                 lineUp() {
                     let rects = draw.getRects(), path, startPt, endPt, start, end;
+                    var flags, flage;
+                    initNullBarrier();
+
                     for (let i = 0; i < rects.length; i++) {
-                        init(...rects[i]);
-                    }
-
-                    //算连接点的位置
-                    GenerateV();
-                    startPt = getLinkPoint(this.startY, this.startX, this.startDir);
-                    endPt = getLinkPoint(this.endY, this.endX, this.endDir);
-
-
-                    for (let i = 0; i < barrier.length; i++) {
-                        for (let j = 0; j < barrier[i].length; j++) {
-                            if (barrier[i][j].x === startPt[0] && barrier[i][j].y === startPt[1]) {
-                                start = barrier[i][j];
-
+                        flags = true;
+                        flage = true;
+                        var y = rects[i][0], x = rects[i][1], h = rects[i][2], w = rects[i][3];
+                        if( this.startY > x && this.startX > y && this.startY <(x+w) && this.startX < (y+h)){
+                            flags = false;
+                        }
+                        else if(this.endY > x && this.endX > y && this.endY <(x+w) && this.endX < (y+h)){
+                            flage = false;
+                        }
+                        if(flage && flags){
+                            init(...rects[i]);
+                            initialXIYI(x,y,w,h);
+                        }else if((flage && !flags) || (!flage && flags) ){
+                            flags = true;
+                            flage = true;
+                            if((this.startY == x && (this.startX > y && this.startX < (y+h))) 
+                            ||(this.startY == (x+w) && (this.startX > y && this.startX < (y+h))) 
+                            ||(this.startX == y && (this.startY > x && this.startY < (x+h))) 
+                            ||(this.startX == (y+h) && (this.startY > x && this.startY < (x+h)))){
+                                flags = false;
                             }
-                            if (barrier[i][j].x === endPt[0] && barrier[i][j].y === endPt[1]) {
-                                end = barrier[i][j];
+                            else if((this.endY == x && (this.endX > y && this.endX < (y+h))) 
+                            ||(this.endY == (x+w) && (this.endX > y && this.endX < (y+h))) 
+                            ||(this.endX == y && (this.endY > x && this.endY < (x+h))) 
+                            ||(this.endX == (y+h) && (this.endY > x && this.endY < (x+h)))){
+                                flage = false;
                             }
-                            if (start && end) break;
+                            if(!flage || !flags){
+                                initialXIYI(x,y,w,h);
+                            }
                         }
                     }
-                    console.log('StartPoint:');
-                    console.log(start);
-                    console.log('EndPoint:');
-                    console.log(end);
-                    console.log('rects');
-                    console.log(draw.rectDatas);
+                    
+                    GenerateV();
+                    console.log(XI);
+                    console.log(YI);
+                    startPt = getStartLinkPoint(this.startY, this.startX, this.startDir);
+                    console.log(startPt);
+                    endPt = getEndLinkPoint(this.endY, this.endX, this.endDir);
+                    start = barrier[startPt[0]][startPt[1]];
+                    end = barrier[endPt[0]][endPt[1]];
                     path = getPath(start, end, this.startDir, this.endDir);
                     console.log(path);
-                    if( path.length > 0)
-                        draw.drawPath(path,this.startY,this.startX,this.endY,this.endX);
+                    //if( path.length > 0)
+                    draw.drawPath(path,this.startY,this.startX,this.endY,this.endX);
+                   
                 }
             }
         })
