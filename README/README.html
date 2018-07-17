@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>OCR.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: "Segoe WPC", "Segoe UI", "SFUIText-Light", "HelveticaNeue-Light", sans-serif, "Droid Sans Fallback";
+	font-size: 14px;
+	padding: 0 12px;
+	line-height: 22px;
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	color: #4080D0;
+	text-decoration: none;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+h1 code,
+h2 code,
+h3 code,
+h4 code,
+h5 code,
+h6 code {
+	font-size: inherit;
+	line-height: auto;
+}
+
+a:hover {
+	color: #4080D0;
+	text-decoration: underline;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left: 5px solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 14px;
+	line-height: 19px;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+.mac code {
+	font-size: 12px;
+	line-height: 18px;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+/** Theming */
+
+.vscode-light,
+.vscode-light pre code {
+	color: rgb(30, 30, 30);
+}
+
+.vscode-dark,
+.vscode-dark pre code {
+	color: #DDD;
+}
+
+.vscode-high-contrast,
+.vscode-high-contrast pre code {
+	color: white;
+}
+
+.vscode-light code {
+	color: #A31515;
+}
+
+.vscode-dark code {
+	color: #D7BA7D;
+}
+
+.vscode-light pre:not(.hljs),
+.vscode-light code > div {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre:not(.hljs),
+.vscode-dark code > div {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre:not(.hljs),
+.vscode-high-contrast code > div {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+.vscode-light blockquote,
+.vscode-dark blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.vscode-high-contrast blockquote {
+	background: transparent;
+	border-color: #fff;
+}
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family:  "Meiryo", "Segoe WPC", "Segoe UI", "SFUIText-Light", "HelveticaNeue-Light", sans-serif, "Droid Sans Fallback";
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+</head>
+<body>
+<h1 id="%E6%AD%A3%E4%BA%A4%E8%B7%AF%E7%94%B1%E9%80%89%E8%B7%AF%E7%AE%97%E6%B3%95">正交路由选路算法</h1>
+<hr>
+<h2 id="%E7%AE%97%E6%B3%95%E6%80%9D%E8%B7%AF">算法思路</h2>
+<hr>
+<p>该算法核心部分来自OCR算法,但是为了更好的用户体验和更好地满足用户需求,需要对OCR算法进行修改.</p>
+<blockquote>
+<p>OCR算法通过建立图形连接点之间的正交网络寻找两点之间可以避开障碍物并且代价最小的路径.OCR算法规定了正交网络的生成以及拐点数计算的规则，寻路算法采用A＊算法</p>
+<blockquote>
+<p><strong>代价</strong> = 两点的曼哈顿距离 + 拐点数<br >
+<strong>曼哈顿距离</strong> : 起点(x1,y1) 终点(x2,y2) H=|x2-x1|+|y2-y1|<br >
+<strong>A*算法</strong> : 一种启发式静态路由选路算法
+公式表示为：<strong>f(n)=g(n)+h(n)</strong>
+其中，f(n) 是从初始状态经由状态n到目标状态的代价估计，g(n)是在状态空    间中从初始状态到状态n的实际代价，h(n)是从状态n到目标状态的最佳路径的估计代价.<br ></p>
+</blockquote>
+</blockquote>
+<ul>
+<li>初始化正交路由网络</li>
+</ul>
+<ol>
+<li>OCR算法生成正交路由时，将图形对应在Barrier的位置区间标志为不可通过（unwalkable），然后将四个顶点的坐标的X值和Y值分别加入到XI，YI中．需要注意的是,取四个顶点和中点时并不是直接取图形的坐标点,而需要向外扩展10个像素点后得到对应的点,避免路径和图形重合.</li>
+<li>但是为了适应更多的用户需求，在一些特定的情况下，有些图形是可以穿过的，这取决于起点和终点的位置．因此需要在每一次寻路时都创建一次正交路由网络.</li>
+<li>OCR默认连接点为每条边的中点,但是实际需求为图上的任一点,所以XI，YI也需要在每一次寻路时重新赋值</li>
+<li>对应代码段<code>prepareLine()</code>,<code>initNullBarrier()</code>,<code>init()</code>,<code>initialBarrier()</code>等
+<br></li>
+</ol>
+<ul>
+<li>初始化连接点</li>
+</ul>
+<ol>
+<li>
+<p>计算XI和YI笛卡儿积的结果，若该点不落在不可穿越的图形内(walkable)，则设为有效连接点，加入到VectorPoint中,对应代码段<code>GenerateV()</code></p>
+</li>
+<li>
+<p>实现后的效果如图,图中的黑色小点表示保存在VectorPoint的有效连接点,红色部分为有效连接点组成的正交网络(并不需要一个数据结构来保存).黄色部分在barrier里标记为0,白色部分标记为1<br>
+<img src="图1.PNG" alt="About"><br></p>
+</li>
+<li>
+<p>从图中我们可以想到,用户点击的是图形的上的点,但是图形上的点并不是连接点,所以需要将用户点击的起点(或终点)转换为对应的最近的有效连接点,实现代码段<code>getStartLinkPoint()</code>,<code>getEndLinkPoint()</code>.<br>
+如图所示<br>
+<img src="图2.PNG" alt="About"><br></p>
+</li>
+</ol>
+<ul>
+<li><strong>寻路-A*算法</strong>
+有了起点和终点的有效连接点和正交网络后，就可以开始真正的寻路了，这一部分也是整个算法最核心的部分．</li>
+</ul>
+<blockquote>
+<p>一般的A*算法会考虑一个节点与之相邻的8的点,但是在正交路由网络中,我们只考虑和该节点进入方向一致,右边以及左边的连接点,考虑这三个相邻的连接点时要按照优先级进行考虑,优先级:进入方向&gt;右边&gt;左边</p>
+</blockquote>
+<ol>
+<li>从起点 A 开始,并把它就加入到一个由有效连接点组成的 openlist中.现在openlist里只有一项,即起点A.</li>
+<li>根据优先级查找与起点A相邻的连接点,如果有则计算该点的代价加入到openlist中.把起点 A 设置为这些连接点的父亲.</li>
+<li>把 A 从openlist中移除，加入到 closelist中,closelist 中的每个连接点都是现在不需要再关注的。</li>
+<li>从openlist中得到代价最小的点,把该点从openlist里取出,放到closelist中;</li>
+</ol>
+<blockquote>
+<p>f = g + h</p>
+</blockquote>
+<ol start="5">
+<li>根据优先级检查所有与它相邻的连接点，忽略已经加入closelist的连接点,如果点不在openlsit中，则把它们加入到 openlist中。</li>
+<li>如果某个相邻的方格已经在openlist中，则检查这条路径是否更优，也就是说经由当前连接点到达该连接点(已经在openlist中的邻接点)是否具有更小的g值。如果没有，不做任何操作。相反,如果g值更小，则把该连接点的父亲设为当前连接点,然后重新计算该连接点的f值和g值。</li>
+<li>不断重复4到6步,直到将终点加入openlist</li>
+<li>对应代码段</li>
+</ol>
+<hr>
+<h2 id="%E5%AE%9E%E7%8E%B0%E6%AD%A5%E9%AA%A4">实现步骤</h2>
+<hr>
+<blockquote>
+<p>实际实现过程中,我们要考虑以下几个问题:</p>
+<ul>
+<li>路径太贴近图形;</li>
+<li>起点和终点因为紧挨着物体,所以没有有效连接点(有效连接点在10个像素点之外);</li>
+<li>什么时候图形可以穿过,什么时候不可以;<br>
+<br>解决方案:</li>
+</ul>
+<ol>
+<li>在代价一样的情况下,我们应该优先选择更远离图形的路径,所以当连接点靠近图形时,将其G值加上某个权重,降低该点的优先级</li>
+<li>当起点或终点找不到有效连接点时,将起点和图形之间的间隙的中点作为有效连接点,并且要加入到XI或YI中．<br>
+<img src="图3.jpg" alt="About"> <br></li>
+<li>图形是否可以穿过的规则如下</li>
+</ol>
+<blockquote>
+<ul>
+<li>直接忽略的图形</li>
+</ul>
+<ol>
+<li>既包含起点也包含终点</li>
+<li>只包含起点且终点不在图形上;或者只包含终点且起点不再边上</li>
+</ol>
+<ul>
+<li>不可以忽略的图形</li>
+</ul>
+<ol>
+<li>即不包含起点也不包含终点</li>
+</ol>
+<ul>
+<li>特殊处理的图形:不需要在Barrier标记为不可走,但需要将顶点信息加入XI,YI</li>
+</ul>
+<ol>
+<li>包含起点且终点在该图形上；或包含终点且起点在该图形上</li>
+</ol>
+<ul>
+<li>注: 包含指点在图形内部,不在边上;在图形上指</li>
+</ul>
+</blockquote>
+</blockquote>
+<ol>
+<li>
+<p>根据图形是否可以穿过初始化Barrier和XI,YI</p>
+<pre><code> if (startInfo.y &gt; x &amp;&amp;　
+ 	startInfo.x &gt; y &amp;&amp;　
+ 	startInfo.y &lt; x + w &amp;&amp;
+ 	startInfo.x &lt; y + h)
+ {
+ 	flags = false; //包含起点
+ }  
+ if (endInfo.y &gt; x &amp;&amp;　endInfo.x &gt; y &amp;&amp;　
+ 	endInfo.y &lt; x + w &amp;&amp;　endInfo.x &lt; y + h) 
+ {
+ 	flage = false; //包含终点
+ }
+ if (flage &amp;&amp; flags) {
+ 	init(...rects[i]); //将图形对应在barrier数组相应位置的point.value全部赋值为0，表示不可穿越
+ 	initialXIYI(x, y, w, h); //将图形的四个顶点加入到XI，YI
+ } 
+ else if ((flage &amp;&amp; !flags) || (!flage &amp;&amp; flags)) {
+ 	flags = true;
+ 	flage = true;
+
+ 	/*起点是否在图形上*/
+ 	if (
+ 	(startInfo.y == x &amp;&amp; 
+ 		(startInfo.x &gt;= y &amp;&amp; startInfo.x &lt;= y + h)) ||
+ 	(startInfo.y == x + w &amp;&amp;
+ 		(startInfo.x &gt;= y &amp;&amp; startInfo.x &lt;= y + h))||
+ 	(startInfo.x == y &amp;&amp; 
+ 		(startInfo.y &gt;= x &amp;&amp; startInfo.y &lt;= x + w)) ||
+ 	(startInfo.x == y + h &amp;&amp;
+ 		(startInfo.y &gt;= x &amp;&amp; startInfo.y &lt;= x + w))) 
+ 	{
+ 		flags = false; // 起点在图形上
+ 	} 
+ 	/*终点是否在图形上*/
+ 	if (
+ 	(endInfo.y == x &amp;&amp; (endInfo.x &gt;= y &amp;&amp; endInfo.x &lt;= (y + h))) ||
+ 	(endInfo.y == (x+w) &amp;&amp; (endInfo.x &gt;= y &amp;&amp; endInfo.x &lt;= (y + h))) ||
+ 	(endInfo.x == y &amp;&amp; (endInfo.y &gt;= x &amp;&amp; endInfo.y &lt;= (x + w))) ||
+ 	(endInfo.x == (y+h) &amp;&amp; (endInfo.y &gt;= x &amp;&amp; endInfo.y &lt;= (x + w)))) 
+ 	{
+ 		flage = false; // 终点在图形上
+ 	}
+
+ 	/*是否:包含起点且终点在该图形上；或包含终点且起点在该图形上*/
+ 	if (!flage || !flags)
+ 	{
+ 		initialXIYI(x, y, w, h); //将图形的四个顶点加入XI,YI,但是图形可以穿越
+ 	}
+ 	/* 如果只是包含了其中一个点,则忽略该图形 */
+ }
+     /*如果包含了起点和终点，则忽略该图形*/
+</code></pre>
+</li>
+<li>
+<p>将起点终点的坐标加入到XI,YI</p>
+<pre><code> 	switch (startInfo.dir) {
+ 		case &quot;N&quot;: // 若起点的前进方向为N,则将起点所在的行加入XI；其他同理
+ 			XI.push(startInfo.y);
+ 			break;
+ 		case &quot;S&quot;:
+ 			XI.push(startInfo.y);
+ 			break;
+ 		case &quot;E&quot;:
+ 			YI.push(startInfo.x);
+ 			break;
+ 		case &quot;W&quot;:
+ 			YI.push(startInfo.x);
+ 			break;
+ 	}
+ 	switch (endInfo.dir) {
+ 		case &quot;N&quot;:
+ 			XI.push(endInfo.y);
+ 			break;
+ 		case &quot;S&quot;:
+ 			XI.push(endInfo.y);
+ 			break;
+ 		case &quot;E&quot;:
+ 			YI.push(endInfo.x);
+ 			break;
+ 		case &quot;W&quot;:
+ 			YI.push(endInfo.x);
+ 			break;
+ 	}
+</code></pre>
+</li>
+<li>
+<p>生成VectorPoint,即正交路由网络--<code>GenerateV()</code></p>
+</li>
+<li>
+<p>将起点和终点转换为相应的有效连接点--<code>getStartLinkPoint()</code>,<code>getEndLinkPoint()</code></p>
+</li>
+<li>
+<p>执行A*算法--<code>getPath()</code>
+<img src="流程图.png" alt="About"><br></p>
+</li>
+</ol>
+<hr>
+<h2 id="%E5%AE%9E%E7%8E%B0%E6%95%88%E6%9E%9C">实现效果</h2>
+<hr>
+<p><img src="图4.jpg" alt="About">
+<img src="图5.png" alt="About"></p>
+
+</body>
+</html>

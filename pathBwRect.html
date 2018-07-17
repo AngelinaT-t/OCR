@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,117 +15,31 @@
 <body>
     <div class="ipt-area" id='app'>
         <div>
-            <button @click='pickStart' :class='{hover:isPickStart}'>Pick Start</button>
-            <span>({{startX+','+startY}})</span>
+            start: {{startData.x+','+startData.y+', dir:'+startData.dir}}
         </div>
+        <br>
         <div>
-            <input type="text" placeholder="Start Direction" v-model='startDir'>
-        </div>
-        <div>
-            <button @click='pickEnd' :class='{hover:isPickEnd}'>Pick End</button>
-            ({{endX+','+endY}})
-        </div>
-        <div>
-            <input type="text" placeholder="End Direction" v-model='endDir'>
-        </div>
-        <div>
-            <button @click='lineUp'>Line Up</button>
+            end: {{endData.x+','+endData.y+', dir:'+endData.dir}}
         </div>
     </div>
     <svg id='root' xmlns="http://www.w3.org/2000/svg"></svg>
 
     <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                startData: { x: "", y: "", dir: "" },
+                endData: { x: "", y: "", dir: "" }
+            },
+            methods: {
+            }
+        })
+
         var draw = new Draw(),
             options = { width: 500, height: 500, elementID: 'root' };
         draw.init(options);
 
-        var app = new Vue({
-            el: '#app',
-            data: {
-                startDir: '',
-                endDir: '',
-                isPickStart: false,
-                isPickEnd: false,
-                startX: 0,
-                startY: 0,
-                endX: 0,
-                endY: 0
-            },
-            methods: {
-                pickStart() {
-                    this.isPickEnd = false;
-                    this.isPickStart = !this.isPickStart;
-                    if (this.isPickStart) {
-                        draw.setPick('start');
-                    } else {
-                        draw.setPick();
-                    }
 
-                },
-                pickEnd() {
-                    this.isPickStart = false;
-                    this.isPickEnd = !this.isPickEnd;
-                    if (this.isPickEnd) {
-                        draw.setPick('end');
-                    } else {
-                        draw.setPick();
-                    }
-                },
-                lineUp() {
-                    let rects = draw.getRects(), path, startPt, endPt, start, end;
-                    var flags, flage;
-                    initNullBarrier();
-
-                    for (let i = 0; i < rects.length; i++) {
-                        flags = true;
-                        flage = true;
-                        var y = rects[i][0], x = rects[i][1], h = rects[i][2], w = rects[i][3];
-                        if( this.startY > x && this.startX > y && this.startY <(x+w) && this.startX < (y+h)){
-                            flags = false;
-                        }
-                        else if(this.endY > x && this.endX > y && this.endY <(x+w) && this.endX < (y+h)){
-                            flage = false;
-                        }
-                        if(flage && flags){
-                            init(...rects[i]);
-                            initialXIYI(x,y,w,h);
-                        }else if((flage && !flags) || (!flage && flags) ){
-                            flags = true;
-                            flage = true;
-                            if((this.startY == x && (this.startX > y && this.startX < (y+h))) 
-                            ||(this.startY == (x+w) && (this.startX > y && this.startX < (y+h))) 
-                            ||(this.startX == y && (this.startY > x && this.startY < (x+h))) 
-                            ||(this.startX == (y+h) && (this.startY > x && this.startY < (x+h)))){
-                                flags = false;
-                            }
-                            else if((this.endY == x && (this.endX > y && this.endX < (y+h))) 
-                            ||(this.endY == (x+w) && (this.endX > y && this.endX < (y+h))) 
-                            ||(this.endX == y && (this.endY > x && this.endY < (x+h))) 
-                            ||(this.endX == (y+h) && (this.endY > x && this.endY < (x+h)))){
-                                flage = false;
-                            }
-                            if(!flage || !flags){
-                                initialXIYI(x,y,w,h);
-                            }
-                        }
-                    }
-                    
-                    GenerateV();
-                    console.log(XI);
-                    console.log(YI);
-                    startPt = getStartLinkPoint(this.startY, this.startX, this.startDir);
-                    console.log(startPt);
-                    endPt = getEndLinkPoint(this.endY, this.endX, this.endDir);
-                    start = barrier[startPt[0]][startPt[1]];
-                    end = barrier[endPt[0]][endPt[1]];
-                    path = getPath(start, end, this.startDir, this.endDir);
-                    console.log(path);
-                    //if( path.length > 0)
-                    draw.drawPath(path,this.startY,this.startX,this.endY,this.endX);
-                   
-                }
-            }
-        })
     </script>
 </body>
 
